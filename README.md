@@ -37,47 +37,49 @@ El proyecto sigue una **Arquitectura Hexagonal** basada en microservicios, lo qu
 com.project
 │
 ├── api               // Controladores
-│   └── *Controller
+│   └── *Clases Controller
 │
 ├── service           // Interfaces de servicios y utilidades técnicas
-│   ├── *Service
-│   ├── *Mapper
-│   └── CryptoProvider
+│   ├── *Interface Service
+│   ├── *Interfaces Mapper
+│   └── *Interface CryptoProvider
 │
 ├── business          // Implementación de lógica de negocio
-│   ├── *ServiceImpl
-│   └── *MapperImpl
+│   ├── *Clase que implementa la Interface Service
+│   └── *Clases que implementan las Interfaces Mapper
 │
 ├── repository        // Acceso a datos y repositorios
-│   ├── *Repository
-│   ├── *Query
-│   ├── *Command
-│   └── *SP
+│   ├── *Clases que implementan las Interfaces Repository
+│   ├── *Clases Query
+│   ├── *Clases Command
+│   └── *Clases SP
 │
 ├── client            // Clientes HTTP utilizando Feign
-│   └── *FeignClient
+│   └── *Interfaces que implementan la librería Feign para llamadas HTTP
 │
 ├── dto               // Objetos de transferencia de datos
-│   ├── *Record
-│   ├── *Result
-│   ├── beans
-│   ├── enums
-│   └── constants
+│   ├── *Clases Record
+│   ├── *Clases Result
+│   ├── *Beans de las clases Record y Result
+│   ├── *Enums que se utilizan en los dto
+│   └── *Constantes
 │
 ├── model             // Modelos de datos y constantes
-│   ├── *Rq
-│   ├── *Rs
-│   ├── beans
-│   ├── enums (errores)
-│   └── constants
+│   ├── *Clases Rq
+│   ├── *Clases Rs
+│   ├── *Beans de las clases Rq y Rs
+│   ├── *Enums que se utilizan en los modelos
+│   ├── *Enums para el manejo de errores
+│   ├── *Interfaces Repository
+│   └── *Constantes
 │
 ├── exception         // Manejo de excepciones personalizadas
-│   ├── *CustomException
-│   └── ErrorResponse
+│   ├── *Clases excepciones custom
+│   └── *Clases de objeto ErrorResponse
 │
 └── component         // Componentes auxiliares
-    ├── ErrorResolver
-    └── CryptoProviderImpl
+    ├── *Clase ErrorResolver
+    └── *Clase que implementa la Interface CryptoProvider
 ```
 
 ### Justificación
