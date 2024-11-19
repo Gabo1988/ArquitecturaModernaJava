@@ -1,4 +1,4 @@
-# Proyecto de Microservicios con Arquitectura Hexagonal
+# Proyecto de Microservicios con API Gateway
 
 ## Descripción
 
