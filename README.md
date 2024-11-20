@@ -1,58 +1,53 @@
-# Proyecto de Microservicios con API Gateway
+# Proyecto de Microservicios con API Gateway y Domain-Driven Design (DDD)
 
 ## Descripción
 
-Este proyecto está diseñado para gestionar de manera independiente y escalable los procesos de negocio en diferentes áreas de la empresa. Utilizando **microservicios con API Gateway** y **Arquitectura Hexagonal**, buscamos proporcionar una solución robusta, escalable y flexible que permita la integración entre diversos servicios mientras mantenemos un alto nivel de autonomía en cada uno de ellos.
+Este proyecto está diseñado para gestionar de manera independiente y escalable los procesos de negocio en diferentes áreas de la empresa. Utilizando **microservicios con API Gateway** y **Domain-Driven Design (DDD)**, buscamos proporcionar una solución robusta, escalable y flexible que permita la integración entre diversos servicios mientras mantenemos un alto nivel de autonomía en cada uno de ellos.
+
+Además, seguimos el enfoque de **Domain-Driven Design (DDD)** para modelar y estructurar el dominio del negocio de forma eficiente.
 
 ## Arquitectura
 
-El proyecto sigue una **Arquitectura Hexagonal** basada en microservicios, lo que permite una clara separación de responsabilidades y facilita la escalabilidad de los distintos bounded contexts. A continuación, se detalla la elección de la arquitectura y la estructura de paquetes implementada.
+**Microservicios con API Gateway y Domain-Driven Design (DDD)**.
 
-### **ADR 001: Selección de Arquitectura para el Proyecto**
+La arquitectura seleccionada combina microservicios con principios de DDD, donde cada microservicio representa un **bounded context** claramente definido. En su interior, la lógica de negocio estará organizada según las prácticas de DDD, separando los dominios del resto de las preocupaciones técnicas.
 
-#### Decisión: Microservicios con API Gateway
+Los microservicios estarán conectados a través de un **API Gateway**, con comunicación basada en **APIs RESTful** y **eventos**, para mantener la independencia y escalabilidad de cada **bounded context**.
 
-**Motivo**: La arquitectura de microservicios con un API Gateway se eligió por ofrecer una clara separación de responsabilidades, escalabilidad independiente de cada bounded context y la posibilidad de integrarse de forma eficiente a través de APIs RESTful y eventos. 
-
-#### Principales Características:
-- **Escalabilidad**: Cada microservicio puede ser escalado de forma independiente.
-- **Resiliencia**: Aislación de servicios, permitiendo que el fallo de uno no afecte a los demás.
-- **Integración Flexible**: Los servicios se comunican a través de APIs RESTful y eventos.
-- **Mantenibilidad**: Facilita la evolución de los servicios sin afectar a los demás.
-
-#### Impacto:
-- Mayor complejidad operativa debido a la gestión de múltiples servicios.
-- Desarrollo inicial más lento, pero con mayores beneficios a largo plazo en términos de escalabilidad y flexibilidad.
-
----
-
-### **ADR 002: Estructura de Paquetes para el Proyecto Java**
-
-#### Decisión: Organización Modular de Paquetes
-
-**Motivo**: Para asegurar la mantenibilidad, escalabilidad y comprensión del código, se adoptó una estructura de paquetes modular que separa claramente las distintas responsabilidades del sistema.
-
-#### Estructura de Paquetes:
+### Estructura de Paquetes:
 ```plaintext
 com.project
 │
-├── api               // Controladores
+├── api               // Adaptadores de entrada (controladores)
 │   └── *Clases Controller
 │
-├── service           // Interfaces de servicios y utilidades técnicas
-│   ├── *Interface Service
-│   ├── *Interfaces Mapper
-│   └── *Interface CryptoProvider
+├── application       // Casos de uso y orquestadores de la aplicación
+│   └── *Clases que implementan la lógica de aplicación (aplicación de la lógica de dominio)
 │
-├── business          // Implementación de lógica de negocio
-│   ├── *Clase que implementa la Interface Service
+├── domain            // Dominio (entidades, valores, agregados, servicios del dominio)
+│   └── *Bounded Context
+│       ├── *Entidades
+│       └── *Servicios
+│
+├── infrastructure    // Adaptadores de infraestructura (bases de datos, APIs externas)
+│   ├── *Repositorios
+│   ├── *Acceso a datos (JPA, repositorios)
+│   └── *Adaptadores APIs externas
+│
+├── service           // Interfaces de servicios técnicos y utilidades
+│   ├── *Interfaz Service
+│   ├── *Interfaz Mapper
+│   └── *Interfaz CryptoProvider
+│
+├── business          // Implementación lógica de negocio
+│   ├── *Clase que implementa la interfaz Service
 │   └── *Clases que implementan las Interfaces Mapper
 │
-├── repository        // Acceso a datos y repositorios
-│   ├── *Clases que implementan las Interfaces Repository
-│   ├── *Clases Query
-│   ├── *Clases Command
-│   └── *Clases SP
+├── repository        // Implementación de acceso a datos, repositories
+│   ├── *Repositorios
+│   ├── *Queries
+│   ├── *Comandos
+│   └── *Stored Procedures
 │
 ├── client            // Clientes HTTP utilizando Feign
 │   └── *Interfaces que implementan la librería Feign para llamadas HTTP
@@ -61,54 +56,20 @@ com.project
 │   ├── *Clases Record
 │   ├── *Clases Result
 │   ├── *Beans de las clases Record y Result
-│   ├── *Enums que se utilizan en los dto
+│   ├── *Enums
 │   └── *Constantes
 │
-├── model             // Modelos de datos y constantes
-│   ├── *Clases Rq
-│   ├── *Clases Rs
-│   ├── *Beans de las clases Rq y Rs
-│   ├── *Enums que se utilizan en los modelos
-│   ├── *Enums para el manejo de errores
-│   ├── *Interfaces Repository
-│   └── *Constantes
+├── model             // Modelos de datos y constantes (generalmente los de comunicación)
+│   ├── *Rq, *Rs
+│   ├── *Beans para las clases Rq y Rs
+│   ├── *Enums y Constants
+│   └── *Interfaces Repository
 │
 ├── exception         // Manejo de excepciones personalizadas
 │   ├── *Clases excepciones custom
-│   └── *Clases de objeto ErrorResponse
+│   └── *ErrorResponse
 │
-└── component         // Componentes auxiliares
-    ├── *Clase ErrorResolver
-    └── *Clase que implementa la Interface CryptoProvider
+└── component         // Componentes auxiliares (servicios transversales)
+    ├── *ErrorResolver
+    └── *Implementación de interfaces como CryptoProvider
 ```
-
-### Justificación
-
-- **Claridad y Consistencia**: La estructura modular permite una navegación clara y comprensible del código.
-- **Mantenibilidad**: Facilita la evolución del sistema sin generar dependencias excesivas entre los distintos componentes.
-- **Patrones de Diseño**: La estructura facilita la aplicación de principios como SOLID, lo que contribuye a una mayor calidad del código.
-
-### Impacto
-
-- **Esfuerzo Inicial**: Requiere un esfuerzo inicial para definir y aplicar consistentemente la estructura.
-- **Curva de Aprendizaje**: Los nuevos desarrolladores podrían necesitar tiempo para familiarizarse con la estructura, pero a largo plazo facilita la integración y colaboración.
-
----
-
-### Desarrollo y Testing
-
-#### **Microservicios y API Gateway**
-- **Comunicación**: Se utiliza comunicación a través de **APIs RESTful** y eventos, asegurando integración sin afectar la independencia de cada microservicio.
-- **Pruebas Automatizadas**: Se implementarán pruebas unitarias, de integración y de aceptación para garantizar la calidad del sistema.
-
-#### **Estructura de Paquetes**
-Se seguirá la estructura definida en el ADR 002 para garantizar la claridad y modularidad del proyecto, con la separación de responsabilidades según el tipo de componente (controladores, servicios, lógica de negocio, repositorios, etc.).
-
----
-
-### Próximos Pasos
-
-1. **Implementación Inicial**: Crear ejemplos de implementación basados en los ADRs, específicamente para los casos de uso iniciales.
-2. **Desarrollo de Servicios**: Desarrollar los primeros microservicios utilizando la estructura de paquetes definida.
-3. **Testing**: Implementar y ejecutar pruebas automatizadas para cada microservicio.
-4. **Documentación y Buenas Prácticas**: Documentar los patrones de diseño y buenas prácticas para asegurar la alineación de todos los miembros del equipo.
