@@ -15,10 +15,10 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>SpringBootPedidos</module>
-		<module>SpringBootFacturacion</module>
-		<module>SpringBootInventario</module>
-		<module>SpringBootLogistica</module>
+		<module>Pedidos</module>
+		<module>Facturacion</module>
+		<module>Inventario</module>
+		<module>Logistica</module>
 	</modules>
 
 	<properties>

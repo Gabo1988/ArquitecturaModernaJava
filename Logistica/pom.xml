@@ -7,10 +7,10 @@
 		<artifactId>SpringBootECommerce</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>com.project.facturacion</groupId>
-	<artifactId>SpringBootFacturacion</artifactId>
+	<groupId>com.project.logistica</groupId>
+	<artifactId>Logistica</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>SpringBootFacturacion</name>
+	<name>Logistica</name>
 	<description>PlataformaECommerce</description>
 
 	<properties>

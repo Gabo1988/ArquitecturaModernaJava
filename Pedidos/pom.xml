@@ -8,9 +8,9 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>com.project.pedidos</groupId>
-	<artifactId>SpringBootPedidos</artifactId>
+	<artifactId>Pedidos</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>SpringBootPedidos</name>
+	<name>Pedidos</name>
 	<description>PlataformaECommerce</description>
 
 	<properties>
