@@ -20,7 +20,7 @@ public class MyArchitectureTest {
     @Test
     public void apiShouldOnlyContainControllers() {
         ArchRule rule = classes()
-                .that().resideInAPackage("com.project.api..")
+                .that().resideInAPackage("com.project.api.controller..")
                 .should().haveSimpleNameEndingWith("Controller");
         rule.check(new ClassFileImporter().importPackages("com.project"));
     }
@@ -30,17 +30,17 @@ public class MyArchitectureTest {
         ArchRule rule = classes()
                 .that().resideInAPackage("com.project.api..")
                 .should().onlyDependOnClassesThat()
-                .resideInAnyPackage("com.project.service..")
+                .resideInAnyPackage("com.project.application.service..")
                 .andShould().onlyDependOnClassesThat()
                 .areInterfaces();
         rule.check(new ClassFileImporter().importPackages("com.project"));
     }
 
     @Test
-    public void apiShouldNotDependDirectlyOnRepository() {
+    public void apiShouldNotDependDirectlyOnPersistence() {
         ArchRule rule = noClasses()
                 .that().resideInAPackage("com.project.api..")
-                .should().dependOnClassesThat().resideInAPackage("com.project.repository..");
+                .should().dependOnClassesThat().resideInAPackage("com.project.infrastructure.persistence..");
         rule.check(new ClassFileImporter().importPackages("com.project"));
     }
 
@@ -48,32 +48,34 @@ public class MyArchitectureTest {
     public void apiShouldNotDependDirectlyOnClient() {
         ArchRule rule = noClasses()
                 .that().resideInAPackage("com.project.api..")
-                .should().dependOnClassesThat().resideInAPackage("com.project.client..");
+                .should().dependOnClassesThat().resideInAPackage("com.project.infrastructure.client..");
         rule.check(new ClassFileImporter().importPackages("com.project"));
     }
 
     @Test
-    public void clientShouldNotDependOnBusiness() {
+    public void clientShouldNotDependOnApplicationOrDomain() {
         ArchRule rule = noClasses()
-                .that().resideInAPackage("com.project.client..")
-                .should().dependOnClassesThat().resideInAPackage("com.project.business..");
+                .that().resideInAPackage("com.project.infrastructure.client..")
+                .should().dependOnClassesThat().resideInAPackage("com.project.application..")
+                .or().resideInAPackage("com.project.domain..");
         rule.check(new ClassFileImporter().importPackages("com.project"));
     }
 
     @Test
-    public void repositoryShouldNotDependOnBusiness() {
+    public void repositoryShouldNotDependOnApplicationOrDomain() {
         ArchRule rule = noClasses()
-                .that().resideInAPackage("com.project.repository..")
-                .should().dependOnClassesThat().resideInAPackage("com.project.business..");
+                .that().resideInAPackage("com.project.infrastructure.persistence..")
+                .should().dependOnClassesThat().resideInAPackage("com.project.application..")
+                .or().resideInAPackage("com.project.domain..");
         rule.check(new ClassFileImporter().importPackages("com.project"));
     }
 
     @Test
-    public void repositoryShouldOnlyAccessSPQueryAndCommandClasses() {
+    public void persistenceShouldOnlyAccessSPQueryAndCommandClasses() {
         ArchRule rule = classes()
-                .that().resideInAPackage("com.project.repository..")
+                .that().resideInAPackage("com.project.infrastructure.persistence..")
                 .should().onlyAccessClassesThat()
-                .resideInAnyPackage("com.project.repository..")
+                .resideInAnyPackage("com.project.infrastructure.persistence..")
                 .andShould().haveSimpleNameEndingWith("SP")
                 .orShould().haveSimpleNameEndingWith("Query")
                 .orShould().haveSimpleNameEndingWith("Command");
@@ -83,7 +85,7 @@ public class MyArchitectureTest {
     @Test
     public void dtoShouldNotContainClassesWithRqOrRsSuffix() {
         ArchRule rule = noClasses()
-                .that().resideInAPackage("com.project.dto..")
+                .that().resideInAPackage("com.project.api.dto..")
                 .should().haveSimpleNameEndingWith("Rq")
                 .orShould().haveSimpleNameEndingWith("Rs");
         rule.check(new ClassFileImporter().importPackages("com.project"));
@@ -92,7 +94,7 @@ public class MyArchitectureTest {
     @Test
     public void modelShouldNotContainClassesWithRecordOrResultSuffix() {
         ArchRule rule = noClasses()
-                .that().resideInAPackage("com.project.model..")
+                .that().resideInAPackage("com.project.domain.model..")
                 .should().haveSimpleNameEndingWith("Record")
                 .orShould().haveSimpleNameEndingWith("Result");
         rule.check(new ClassFileImporter().importPackages("com.project"));
@@ -101,32 +103,59 @@ public class MyArchitectureTest {
     @Test
     public void recordAndResultClassesInDtoShouldOnlyAccessClassesInDto() {
         ArchRule rule = classes()
-                .that().resideInAPackage("com.project.dto..")
+                .that().resideInAPackage("com.project.api.dto..")
                 .and().haveSimpleNameEndingWith("Record")
                 .or().haveSimpleNameEndingWith("Result")
                 .should().onlyAccessClassesThat()
-                .resideInAPackage("com.project.dto..");
+                .resideInAPackage("com.project.api.dto..");
         rule.check(new ClassFileImporter().importPackages("com.project"));
     }
 
     @Test
     public void rqAndRsClassesInModelShouldOnlyAccessClassesInModel() {
         ArchRule rule = classes()
-                .that().resideInAPackage("com.project.model..")
+                .that().resideInAPackage("com.project.domain.model..")
                 .and().haveSimpleNameEndingWith("Rq")
                 .or().haveSimpleNameEndingWith("Rs")
                 .should().onlyAccessClassesThat()
-                .resideInAnyPackage("com.project.model..");
+                .resideInAnyPackage("com.project.domain.model..");
         rule.check(new ClassFileImporter().importPackages("com.project"));
     }
 
     @Test
     public void servicesAndBusinessShouldNotDependOnControllers() {
         ArchRule rule = noClasses()
-                .that().resideInAPackage("com.project.service..")
-                .or().resideInAPackage("com.project.business..")
+                .that().resideInAPackage("com.project.application..")
+                .or().resideInAPackage("com.project.application.service..")
                 .should().dependOnClassesThat()
-                .resideInAPackage("com.project.api..");
+                .resideInAPackage("com.project.api.controller..");
+        rule.check(new ClassFileImporter().importPackages("com.project"));
+    }
+
+    @Test
+    public void testsShouldBeInTestPackage() {
+        ArchRule rule = classes()
+                .that().resideInAPackage("com.project..")
+                .should().resideInAPackage("com.project.test..");
+        rule.check(new ClassFileImporter().importPackages("com.project"));
+    }
+
+    @Test
+    public void servicesShouldHaveSeparateInterfacesAndImplementations() {
+        ArchRule rule = classes()
+                .that().resideInAPackage("com.project.application.service..")
+                .and().areInterfaces()
+                .should().onlyDependOnClassesThat()
+                .resideInAnyPackage("com.project.application.usecase..");
+        rule.check(new ClassFileImporter().importPackages("com.project"));
+    }
+
+    @Test
+    public void domainClassesShouldFollowNamingConventions() {
+        ArchRule rule = classes()
+                .that().resideInAPackage("com.project.domain.model..")
+                .should().haveSimpleNameNotContaining("Dto")
+                .andShould().haveSimpleNameNotContaining("Entity");
         rule.check(new ClassFileImporter().importPackages("com.project"));
     }
 }
