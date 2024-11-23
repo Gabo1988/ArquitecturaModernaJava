@@ -1,5 +1,6 @@
 package com.project.pedidos;
 
+import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
@@ -54,20 +55,34 @@ public class MyArchitectureTest {
 
     @Test
     public void clientShouldNotDependOnApplicationOrDomain() {
-        ArchRule rule = noClasses()
+        JavaClasses importedClasses = new ClassFileImporter().importPackages("com.project");
+
+        ArchRule noDependencyOnApplication = noClasses()
                 .that().resideInAPackage("com.project.infrastructure.client..")
-                .should().dependOnClassesThat().resideInAPackage("com.project.application..")
-                .or().resideInAPackage("com.project.domain..");
-        rule.check(new ClassFileImporter().importPackages("com.project"));
+                .should().dependOnClassesThat().resideInAPackage("com.project.application..");
+
+        ArchRule noDependencyOnDomain = noClasses()
+                .that().resideInAPackage("com.project.infrastructure.client..")
+                .should().dependOnClassesThat().resideInAPackage("com.project.domain..");
+
+        noDependencyOnApplication.check(importedClasses);
+        noDependencyOnDomain.check(importedClasses);
     }
 
     @Test
     public void repositoryShouldNotDependOnApplicationOrDomain() {
-        ArchRule rule = noClasses()
+        JavaClasses importedClasses = new ClassFileImporter().importPackages("com.project");
+
+        ArchRule noDependencyOnApplication = noClasses()
                 .that().resideInAPackage("com.project.infrastructure.persistence..")
-                .should().dependOnClassesThat().resideInAPackage("com.project.application..")
-                .or().resideInAPackage("com.project.domain..");
-        rule.check(new ClassFileImporter().importPackages("com.project"));
+                .should().dependOnClassesThat().resideInAPackage("com.project.application..");
+
+        ArchRule noDependencyOnDomain = noClasses()
+                .that().resideInAPackage("com.project.infrastructure.persistence..")
+                .should().dependOnClassesThat().resideInAPackage("com.project.domain..");
+
+        noDependencyOnApplication.check(importedClasses);
+        noDependencyOnDomain.check(importedClasses);
     }
 
     @Test
